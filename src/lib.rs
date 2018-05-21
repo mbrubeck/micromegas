@@ -1,5 +1,7 @@
+extern crate harfbuzz;
 extern crate unicode_bidi as bidi;
 
+mod font;
 mod word_break;
 
 pub fn layout_line(text: &str) {
@@ -13,7 +15,7 @@ pub fn layout_line(text: &str) {
     let (bidi_levels, bidi_runs) = bidi_info.visual_runs(paragraph, line);
     for bidi_run in bidi_runs {
         let bidi_level = bidi_levels[bidi_run.start];
-        for word in word_break::words(&text[bidi_run]) {
+        for word in word_break::simple(&text[bidi_run]) {
             layout_word(word, bidi_level);
         }
     }

@@ -1,13 +1,14 @@
-pub fn words(text: &str) -> Words {
-    Words { text, pos: 0 }
+/// Simple word breaking iterator for caching purposes
+pub fn simple(text: &str) -> Simple {
+    Simple { text, pos: 0 }
 }
 
-pub struct Words<'a> {
+pub struct Simple<'a> {
     text: &'a str,
     pos: usize,
 }
 
-impl<'a> Iterator for Words<'a> {
+impl<'a> Iterator for Simple<'a> {
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -46,5 +47,5 @@ fn break_before(c: char) -> bool {
 
 #[test]
 fn test() {
-    assert!(words("hello world").eq(vec!["hello", " ", "world"]));
+    assert!(simple("hello world").eq(vec!["hello", " ", "world"]));
 }

@@ -4,15 +4,16 @@ version = "0.1.0"
 authors = ["Matt Brubeck <mbrubeck@limpet.net>"]
 
 [dependencies]
+euclid = "0.17"
 #freetype = "0.4"
 harfbuzz = "0.2"
+# itertools = "0.7"
+# lazy_static = "1.0"
 servo-fontconfig = "0.2.1"
 unicode-bidi = "0.3"
 unicode-script = { version = "0.2", features = ["harfbuzz"] }
 xi-unicode = "0.1"
 pathfinder = "0.3.5"
-# itertools = "0.7"
-# lazy_static = "1.0"
 # uluru = "0.2"
 
 [patch.crates-io]

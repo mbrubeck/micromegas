@@ -1,5 +1,7 @@
 extern crate euclid;
 extern crate harfbuzz;
+extern crate unic_ucd_category;
+extern crate unic_emoji_char;
 extern crate unicode_bidi as bidi;
 
 pub use font::{FontCollection, FontFamily, FontStyle, Typeface};

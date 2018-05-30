@@ -63,6 +63,7 @@ dependencies = [
  "euclid 0.17.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "freetype 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "harfbuzz 0.2.0 (git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas)",
+ "harfbuzz-sys 0.2.0 (git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas)",
  "unic-emoji-char 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unic-ucd-category 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -1,5 +1,6 @@
 extern crate euclid;
 extern crate harfbuzz;
+extern crate harfbuzz_sys;
 extern crate unic_ucd_category;
 extern crate unic_emoji_char;
 extern crate unicode_bidi;

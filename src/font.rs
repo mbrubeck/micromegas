@@ -26,7 +26,7 @@ impl Default for FontStyle {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Fakery {
     pub fake_bold: bool,
     pub fake_italic: bool,
@@ -54,11 +54,13 @@ pub trait Typeface {
     fn has_glyph(&self, c: char) -> bool;
 }
 
+#[derive(Debug)]
 pub struct Font<T> {
     pub typeface: T,
     pub style: FontStyle,
 }
 
+#[derive(Debug, Clone)]
 pub struct FakedFont<'a, T: 'a> {
     pub font: &'a Font<T>,
     pub fakery: Fakery,

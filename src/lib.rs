@@ -35,6 +35,7 @@ pub fn layout_line<T>(text: &str, style: FontStyle, fonts: &FontCollection<T>)
     }
 }
 
+// TODO: caching
 pub fn layout_word<T>(
     word: &str,
     style: FontStyle,
@@ -43,10 +44,13 @@ pub fn layout_word<T>(
 )
 where T: Typeface
 {
-    for (_font, range) in font::itemize(word, style, fonts) {
+    for (font, range) in font::itemize(word, style, fonts) {
+        let hb_font = font.to_hb_font(); // TODO: cache
         let font_run = &word[range];
-        for (_script, _script_run) in script_runs(font_run) {
-            // ....
+        for (script, script_run) in script_runs(font_run) {
+            let mut buf = harfbuzz::Buffer::with(script_run);
+            buf.set_script(script.to_hb_script());
+            let glyphs = buf.shape(&hb_font, &harfbuzz::Features::default());
         }
     }
 }

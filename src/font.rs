@@ -32,15 +32,6 @@ pub struct Fakery {
     pub fake_italic: bool,
 }
 
-impl Fakery {
-    fn new<T>(wanted: FontStyle, actual: &Font<T>) -> Self {
-        Fakery {
-            fake_bold: wanted.weight >= 6 && (wanted.weight - actual.style.weight) >= 2,
-            fake_italic: wanted.italic && !actual.style.italic,
-        }
-    }
-}
-
 #[derive(Clone)]
 pub struct Options {
     // font: &Font,
@@ -73,6 +64,20 @@ pub struct FakedFont<'a, T: 'a> {
     pub fakery: Fakery,
 }
 
+impl<'a, T> FakedFont<'a, T> {
+    fn new(wanted: FontStyle, font: &'a Font<T>) -> Self {
+        let fakery = Fakery {
+            fake_bold: wanted.weight >= 6 && (wanted.weight - font.style.weight) >= 2,
+            fake_italic: wanted.italic && !font.style.italic,
+        };
+        FakedFont { font, fakery }
+    }
+
+    pub fn to_hb_font(&self) -> harfbuzz::Font {
+        unimplemented!()
+    }
+}
+
 pub struct FontFamily<T> {
     fonts: Vec<Font<T>>,
     // lang_id
@@ -96,8 +101,7 @@ impl<T> FontFamily<T> where T: Typeface {
 
     fn closest_match(&self, style: FontStyle) -> FakedFont<T> {
         let font = self.fonts.iter().min_by_key(|f| f.style.difference(&style)).unwrap();
-        let fakery = Fakery::new(style, &font);
-        FakedFont { font, fakery }
+        FakedFont::new(style, font)
     }
 }
 

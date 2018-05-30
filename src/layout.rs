@@ -1,5 +1,5 @@
 use font::{self, FakedFont, FontCollection, FontStyle, Typeface};
-use harfbuzz;
+use harfbuzz::{self, Direction::*};
 use script::script_runs;
 use unicode_bidi as bidi;
 use word_break;
@@ -33,14 +33,14 @@ pub fn layout_line<'a, T>(text: &str, style: FontStyle, fonts: &'a FontCollectio
 
 #[derive(Debug, Clone)]
 pub struct Layout<'a, T: 'a> {
-    advances: Vec<f32>,
+    advance: f32,
     glyphs: Vec<LayoutGlyph<'a, T>>,
 }
 
 impl<'a, T> Layout<'a, T> where T: Typeface {
     fn new() -> Self {
         Layout {
-            advances: Vec::new(),
+            advance: 0.,
             glyphs: Vec::new(),
         }
     }
@@ -54,20 +54,43 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
         &mut self,
         word: &str,
         style: FontStyle,
-        fonts: &FontCollection<T>,
-        _bidi_level: bidi::Level,
+        fonts: &'a FontCollection<T>,
+        bidi_level: bidi::Level,
     ) {
         // Iterate over same-font runs within the word.
-        for (font, range) in font::itemize(word, style, fonts) {
+        let mut font_runs = font::itemize(word, style, fonts);
+        if bidi_level.is_rtl() {
+            font_runs.reverse();
+        }
+
+        for (font, range) in font_runs {
             let hb_font = font.to_hb_font(); // TODO: cache the hb_font
             let font_run = &word[range];
 
-            // Iterate over same-srcipt runs within the font run.
+            // Iterate over same-script runs within the font run.
+            // TODO: Reverse order if RTL. Minikin does not do this yet because it is "unlikely"
+            // with the current font stack to have multiple script runs within an RTL font run.
             for (script, script_run) in script_runs(font_run) {
                 // TODO: Re-use the harfbuzz buffer.
                 let mut buf = harfbuzz::Buffer::with(script_run);
                 buf.set_script(script.to_hb_script());
+                buf.set_direction(if bidi_level.is_rtl() { RTL } else { LTR });
+
+                // Get glyph info from the shaper and append it to the Layout.
                 let glyphs = buf.shape(&hb_font, &harfbuzz::Features::default());
+                self.glyphs.reserve(glyphs.len());
+
+                for glyph in glyphs {
+                    self.glyphs.push(LayoutGlyph {
+                        x: glyph.x_offset() as f32 + self.advance,
+                        y: glyph.y_offset() as f32,
+                        glyph_id: glyph.id(),
+                        font,
+                    });
+                    self.advance += glyph.x_advance() as f32;
+                    // TODO: letter-spacing.
+                    // TODO: Record glyph advances and bounding boxes in the Layout.
+                }
             }
         }
     }

@@ -26,7 +26,7 @@ impl Default for FontStyle {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Fakery {
     pub fake_bold: bool,
     pub fake_italic: bool,
@@ -60,10 +60,16 @@ pub struct Font<T> {
     pub style: FontStyle,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FakedFont<'a, T: 'a> {
     pub font: &'a Font<T>,
     pub fakery: Fakery,
+}
+
+impl<'a, T> Copy for FakedFont<'a, T> {}
+
+impl<'a, T> Clone for FakedFont<'a, T> {
+    fn clone(&self) -> Self { *self }
 }
 
 impl<'a, T> FakedFont<'a, T> {

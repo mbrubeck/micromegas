@@ -31,7 +31,7 @@ dependencies = [
 [[package]]
 name = "harfbuzz"
 version = "0.2.0"
-source = "git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas#20061026800d1468cbc4f51c1664303d93670fc3"
+source = "git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas#d14512acc0f8b90ef9bdccdda124206a93b7b890"
 dependencies = [
  "harfbuzz-sys 0.2.0 (git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas)",
 ]
@@ -39,7 +39,7 @@ dependencies = [
 [[package]]
 name = "harfbuzz-sys"
 version = "0.2.0"
-source = "git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas#20061026800d1468cbc4f51c1664303d93670fc3"
+source = "git+https://github.com/mbrubeck/rust-harfbuzz?branch=micromegas#d14512acc0f8b90ef9bdccdda124206a93b7b890"
 dependencies = [
  "cmake 0.1.31 (registry+https://github.com/rust-lang/crates.io-index)",
  "freetype 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",

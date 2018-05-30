@@ -3,8 +3,11 @@ extern crate harfbuzz;
 extern crate unic_ucd_category;
 extern crate unic_emoji_char;
 extern crate unicode_bidi as bidi;
+extern crate unicode_script;
 
 pub use font::{FontCollection, FontFamily, FontStyle, Typeface};
+
+use unicode_script::Script;
 
 mod font;
 mod word_break;
@@ -37,13 +40,54 @@ pub fn layout_word<T>(
     style: FontStyle,
     fonts: &FontCollection<T>,
     _bidi_level: bidi::Level,
-) -> f32
-    where T: Typeface
+)
+where T: Typeface
 {
-    let mut advance = 0.0;
-
-    for (_font, _run) in font::itemize(word, style, fonts) {
+    for (_font, range) in font::itemize(word, style, fonts) {
+        let font_run = &word[range];
+        for (_script, _script_run) in script_runs(font_run) {
+            // ....
+        }
     }
+}
 
-    advance
+struct ScriptRuns<'a> {
+    text: &'a str,
+    script: Script,
+    pos: usize,
+}
+
+impl<'a> Iterator for ScriptRuns<'a> {
+    type Item = (Script, &'a str);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        for (i, c) in self.text[self.pos..].char_indices() {
+            let script = unicode_script::get_script(c);
+            if script != self.script {
+                match self.script {
+                    Script::Unknown | Script::Inherited | Script::Common => {
+                        self.script = script;
+                        continue;
+                    }
+                    _ => {}
+                }
+                match script {
+                    Script::Inherited | Script::Common => continue,
+                    _ => {}
+                }
+                let start = self.pos;
+                self.pos = i;
+                self.script = script;
+                return Some((script, &self.text[start..i]));
+            }
+        }
+        if self.pos < self.text.len() {
+            return Some((self.script, &self.text[self.pos..]))
+        }
+        None
+    }
+}
+
+fn script_runs(text: &str) -> ScriptRuns {
+    ScriptRuns { text, script: Script::Unknown, pos: 0 }
 }

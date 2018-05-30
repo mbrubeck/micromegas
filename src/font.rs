@@ -1,6 +1,5 @@
 use euclid::Rect;
 use harfbuzz;
-use std::iter::ExactSizeIterator;
 use std::ops::Range;
 use unic_emoji_char::{is_emoji_modifier, is_emoji_modifier_base};
 use unic_ucd_category::GeneralCategory;

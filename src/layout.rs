@@ -64,7 +64,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
         }
 
         for (font, range) in font_runs {
-            let hb_font = font.to_hb_font(); // TODO: cache the hb_font
+            let hb_font = font.font.to_hb_font(); // TODO: cache the hb_font
             let font_run = &word[range];
 
             // Iterate over same-script runs within the font run.

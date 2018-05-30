@@ -6,6 +6,7 @@ extern crate unicode_bidi;
 extern crate unicode_script;
 
 mod font;
+pub mod platform;
 mod word_break;
 mod script;
 mod layout;

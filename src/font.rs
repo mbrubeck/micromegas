@@ -49,6 +49,7 @@ pub struct Options {
 pub trait Typeface {
     fn h_advance(&self, glyph: u32, options: Options) -> f32;
     fn bounds(&self, glyph: u32, options: Options) -> Rect<f32>;
+    fn to_hb_font(&self) -> harfbuzz::Font;
 
     // TODO: No longer needed when cached coverage is implemented.
     fn has_glyph(&self, c: char) -> bool;
@@ -79,10 +80,6 @@ impl<'a, T> FakedFont<'a, T> {
             fake_italic: wanted.italic && !font.style.italic,
         };
         FakedFont { font, fakery }
-    }
-
-    pub fn to_hb_font(&self) -> harfbuzz::Font {
-        unimplemented!()
     }
 }
 

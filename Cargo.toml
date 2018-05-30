@@ -3,9 +3,12 @@ name = "micromegas"
 version = "0.1.0"
 authors = ["Matt Brubeck <mbrubeck@limpet.net>"]
 
+[features]
+default = ["freetype"]
+
 [dependencies]
 euclid = "0.17"
-# freetype = "0.4"
+freetype = { version = "0.4", optional = true }
 harfbuzz = "0.2"
 # servo-fontconfig = "0.2.1"
 unic-ucd-category = "0.7.0"

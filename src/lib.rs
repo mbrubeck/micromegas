@@ -13,4 +13,4 @@ mod script;
 mod layout;
 
 pub use font::{FontCollection, FontFamily, FontStyle, Typeface};
-pub use layout::{layout_line, Layout, LayoutGlyph};
+pub use layout::{Layout, LayoutGlyph};

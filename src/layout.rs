@@ -4,32 +4,6 @@ use script::script_runs;
 use unicode_bidi as bidi;
 use word_break;
 
-pub fn layout_line<'a, T>(text: &str, style: FontStyle, fonts: &'a FontCollection<T>) -> Layout<'a, T>
-    where T: Typeface
-{
-    let mut layout = Layout::new();
-
-    // Expect a single paragraph and treat it as one line.
-    let bidi_info = bidi::BidiInfo::new(text, None);
-    assert_eq!(bidi_info.paragraphs.len(), 1);
-    let paragraph = &bidi_info.paragraphs[0];
-    let line = paragraph.range.clone();
-
-    // Iterate over bidi runs in visual order.
-    let (bidi_levels, bidi_runs) = bidi_info.visual_runs(paragraph, line);
-    for bidi_run in bidi_runs {
-        let bidi_level = bidi_levels[bidi_run.start];
-
-        // Split each bidi run into "words" for caching purposes. If the same word occurs
-        // frequently, we can cache its layout rather than re-shaping it every time.
-        for word in word_break::simple(&text[bidi_run]) {
-            layout.layout_word(word, style, fonts, bidi_level);
-        }
-    }
-
-    layout
-}
-
 
 #[derive(Debug, Clone)]
 pub struct Layout<'a, T: 'a> {
@@ -38,10 +12,31 @@ pub struct Layout<'a, T: 'a> {
 }
 
 impl<'a, T> Layout<'a, T> where T: Typeface {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Layout {
             advance: 0.,
             glyphs: Vec::new(),
+        }
+    }
+
+    pub fn layout(&mut self, text: &str, style: FontStyle, fonts: &'a FontCollection<T>) {
+        // Expect a single paragraph and treat it as one line.
+        // TODO: Implement line breaking.
+        let bidi_info = bidi::BidiInfo::new(text, None);
+        assert_eq!(bidi_info.paragraphs.len(), 1);
+        let paragraph = &bidi_info.paragraphs[0];
+        let line = paragraph.range.clone();
+
+        // Iterate over bidi runs in visual order.
+        let (bidi_levels, bidi_runs) = bidi_info.visual_runs(paragraph, line);
+        for bidi_run in bidi_runs {
+            let bidi_level = bidi_levels[bidi_run.start];
+
+            // Split each bidi run into "words" for caching purposes. If the same word occurs
+            // frequently, we can cache its layout rather than re-shaping it every time.
+            for word in word_break::simple(&text[bidi_run]) {
+                self.layout_word(word, style, fonts, bidi_level);
+            }
         }
     }
 
@@ -50,7 +45,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
     }
 
     // TODO: caching
-    pub fn layout_word(
+    fn layout_word(
         &mut self,
         word: &str,
         style: FontStyle,

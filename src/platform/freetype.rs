@@ -6,6 +6,7 @@ use harfbuzz;
 use harfbuzz_sys::{
     hb_blob_create,
     hb_blob_t,
+    hb_face_create,
     hb_face_create_for_tables,
     hb_face_destroy,
     hb_face_get_upem,
@@ -17,16 +18,13 @@ use harfbuzz_sys::{
     hb_ot_font_set_funcs,
     HB_MEMORY_MODE_READONLY,
 };
+use pathfinder_font_renderer::freetype::Face;
 use self::freetype::succeeded;
 use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfnt_Table};
 use std::ptr;
 use std::os::raw::{c_char, c_void};
 
-pub struct FreetypeFont {
-    pub face: FT_Face,
-}
-
-impl Typeface for FreetypeFont {
+impl Typeface for Face {
     fn h_advance(&self, _glyph: u32, _: Options) -> f32 {
         unimplemented!()
     }
@@ -36,12 +34,17 @@ impl Typeface for FreetypeFont {
     }
 
     fn has_glyph(&self, c: char) -> bool {
-        unsafe { FT_Get_Char_Index(self.face, c as FT_ULong) != 0 }
+        unsafe { FT_Get_Char_Index(self.as_native(), c as FT_ULong) != 0 }
     }
 
     fn to_hb_font(&self) -> harfbuzz::Font {
         unsafe {
-            let face = hb_face_create_for_tables(Some(get_table), self.face as *mut c_void, None);
+            let face = if let Some(bytes) = self.as_bytes() {
+                let blob = harfbuzz::Blob::new_read_only(&bytes[..]);
+                hb_face_create(blob.as_raw(), self.font_index())
+            } else {
+                hb_face_create_for_tables(Some(get_table), self.as_native() as *mut c_void, None)
+            };
             let parent_font = hb_font_create(face);
             hb_ot_font_set_funcs(parent_font);
 

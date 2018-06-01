@@ -5,6 +5,7 @@ extern crate unic_ucd_category;
 extern crate unic_emoji_char;
 extern crate unicode_bidi;
 extern crate unicode_script;
+extern crate pathfinder_font_renderer;
 
 mod font;
 pub mod platform;

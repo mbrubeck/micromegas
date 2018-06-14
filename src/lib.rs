@@ -13,5 +13,5 @@ mod word_break;
 mod script;
 mod layout;
 
-pub use font::{Font, FontCollection, FontFamily, FontStyle, Typeface};
+pub use font::{Font, FontCollection, FontFamily, FontStyle, Options, Typeface};
 pub use layout::{Layout, LayoutGlyph};

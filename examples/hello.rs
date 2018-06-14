@@ -1,8 +1,10 @@
+extern crate harfbuzz;
 extern crate micromegas;
 extern crate pathfinder_font_renderer;
 
 use {
-    micromegas::{Font, FontCollection, FontFamily, FontStyle, Layout},
+    harfbuzz::Features,
+    micromegas::{Font, FontCollection, FontFamily, FontStyle, Layout, Options},
     pathfinder_font_renderer::freetype::FontContext,
     std::sync::Arc,
 };
@@ -18,9 +20,10 @@ fn main() {
     let font = Font { typeface, style };
     let family = FontFamily::new(vec![font]);
     let fonts = FontCollection { families: vec![family] };
+    let options = Options { size: 12.0, features: Features::default() };
 
     let mut layout = Layout::new();
-    layout.push("hello", style, &fonts);
+    layout.push("hello", style, &fonts, &options);
 
     for glyph in layout.glyphs() {
         println!("{}: ({}, {})", glyph.id, glyph.x, glyph.y);

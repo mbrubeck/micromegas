@@ -36,20 +36,20 @@ pub struct Fakery {
 pub struct Options {
     // font: &Font,
     pub size: f32,
-    pub scale_x: f32,
-    pub skew_x: f32,
-    pub letter_spacing: f32,
-    pub word_spacing: f32,
+    // pub scale_x: f32,
+    // pub skew_x: f32,
+    // pub letter_spacing: f32,
+    // pub word_spacing: f32,
     // paintFlags
-    pub fakery: Fakery,
+    // pub fakery: Fakery,
     // hyphenEdit
     pub features: harfbuzz::Features,
 }
 
 pub trait Typeface {
-    fn h_advance(&self, glyph: u32, options: Options) -> f32;
-    fn bounds(&self, glyph: u32, options: Options) -> Rect<f32>;
-    fn to_hb_font(&self) -> harfbuzz::Font;
+    fn h_advance(&self, glyph: u32, options: &Options) -> f32;
+    fn bounds(&self, glyph: u32, options: &Options) -> Rect<f32>;
+    fn to_hb_font(&self, options: &Options) -> harfbuzz::Font;
 
     // TODO: No longer needed when cached coverage is implemented.
     fn has_glyph(&self, c: char) -> bool;

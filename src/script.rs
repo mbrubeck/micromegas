@@ -14,6 +14,7 @@ impl<'a> Iterator for ScriptRuns<'a> {
     type Item = (Script, &'a str);
 
     fn next(&mut self) -> Option<Self::Item> {
+        let start = self.pos;
         for (i, c) in self.text[self.pos..].char_indices() {
             let script = get_script(c);
             if script != self.script {
@@ -28,7 +29,6 @@ impl<'a> Iterator for ScriptRuns<'a> {
                     Script::Inherited | Script::Common => continue,
                     _ => {}
                 }
-                let start = self.pos;
                 self.pos = i;
                 self.script = script;
                 return Some((script, &self.text[start..i]));
@@ -36,7 +36,7 @@ impl<'a> Iterator for ScriptRuns<'a> {
         }
         if self.pos < self.text.len() {
             self.pos = self.text.len();
-            return Some((self.script, &self.text[self.pos..]))
+            return Some((self.script, &self.text[start..]))
         }
         None
     }

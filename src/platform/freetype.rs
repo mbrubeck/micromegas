@@ -18,18 +18,18 @@ use harfbuzz_sys::{
     hb_ot_font_set_funcs,
     HB_MEMORY_MODE_READONLY,
 };
-use pathfinder_font_renderer::freetype::Face;
+use pathfinder_font_renderer::freetype::{Face, ToFtF26Dot6};
 use self::freetype::succeeded;
-use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfnt_Table};
+use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfnt_Table, FT_Set_Char_Size, FT_Set_Pixel_Sizes};
 use std::ptr;
 use std::os::raw::{c_char, c_void};
 
 impl<'a> Typeface for &'a Face {
-    fn h_advance(&self, _glyph: u32, _: Options) -> f32 {
+    fn h_advance(&self, _glyph: u32, _: &Options) -> f32 {
         unimplemented!()
     }
 
-    fn bounds(&self, _glyph: u32, _: Options) -> Rect<f32> {
+    fn bounds(&self, _glyph: u32, _: &Options) -> Rect<f32> {
         unimplemented!()
     }
 
@@ -37,8 +37,9 @@ impl<'a> Typeface for &'a Face {
         unsafe { FT_Get_Char_Index(self.as_native(), c as FT_ULong) != 0 }
     }
 
-    fn to_hb_font(&self) -> harfbuzz::Font {
+    fn to_hb_font(&self, options: &Options) -> harfbuzz::Font {
         unsafe {
+            FT_Set_Char_Size(self.as_native(), options.size.to_ft_f26dot6(), 0, 72, 0);
             let face = if let Some(bytes) = self.as_bytes() {
                 let blob = harfbuzz::Blob::new_read_only(&bytes[..]);
                 hb_face_create(blob.as_raw(), self.font_index())

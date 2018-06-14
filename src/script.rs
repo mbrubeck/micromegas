@@ -35,6 +35,7 @@ impl<'a> Iterator for ScriptRuns<'a> {
             }
         }
         if self.pos < self.text.len() {
+            self.pos = self.text.len();
             return Some((self.script, &self.text[self.pos..]))
         }
         None

@@ -8,6 +8,7 @@ use word_break;
 #[derive(Debug, Clone)]
 pub struct Layout<'a, T: 'a> {
     advance: f32,
+    advances: Vec<f32>,
     glyphs: Vec<LayoutGlyph<'a, T>>,
 }
 
@@ -15,6 +16,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
     pub fn new() -> Self {
         Layout {
             advance: 0.,
+            advances: Vec::new(),
             glyphs: Vec::new(),
         }
     }
@@ -74,6 +76,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
                 // Get glyph info from the shaper and append it to the Layout.
                 let glyphs = buf.shape(&hb_font, &harfbuzz::Features::default());
                 self.glyphs.reserve(glyphs.len());
+                self.advances.reserve(glyphs.len());
 
                 for glyph in glyphs {
                     self.glyphs.push(LayoutGlyph {
@@ -82,9 +85,11 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
                         glyph_id: glyph.id(),
                         font,
                     });
-                    self.advance += glyph.x_advance() as f32;
+                    let advance = glyph.x_advance() as f32;
+                    self.advances.push(advance);
+                    self.advance += advance;
                     // TODO: letter-spacing.
-                    // TODO: Record glyph advances and bounding boxes in the Layout.
+                    // TODO: Record glyph bounding boxes in the Layout.
                 }
             }
         }

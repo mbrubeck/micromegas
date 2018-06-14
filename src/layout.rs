@@ -30,7 +30,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
         }
     }
 
-    pub fn layout(&mut self, text: &str, style: FontStyle, fonts: &'a FontCollection<T>) {
+    pub fn push(&mut self, text: &str, style: FontStyle, fonts: &'a FontCollection<T>) {
         // Expect a single paragraph and treat it as one line.
         // TODO: Implement line breaking.
         let bidi_info = bidi::BidiInfo::new(text, None);
@@ -46,7 +46,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
             // Split each bidi run into "words" for caching purposes. If the same word occurs
             // frequently, we can cache its layout rather than re-shaping it every time.
             for word in word_break::simple(&text[bidi_run]) {
-                self.layout_word(word, style, fonts, bidi_level);
+                self.push_word(word, style, fonts, bidi_level);
             }
         }
     }
@@ -56,7 +56,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
     }
 
     // TODO: caching
-    fn layout_word(
+    fn push_word(
         &mut self,
         word: &str,
         style: FontStyle,

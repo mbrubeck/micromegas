@@ -23,7 +23,7 @@ fn main() {
     let options = Options { size: 12.0, features: Features::default() };
 
     let mut layout = Layout::new();
-    layout.push("hello", style, &fonts, &options);
+    layout.push("hello world", style, &fonts, &options);
 
     for glyph in layout.glyphs() {
         println!("{}: ({}, {})", glyph.id, glyph.x, glyph.y);

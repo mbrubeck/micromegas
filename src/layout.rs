@@ -47,13 +47,11 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
         // Iterate over bidi runs in visual order.
         let (bidi_levels, bidi_runs) = bidi_info.visual_runs(paragraph, line);
         for bidi_run in bidi_runs {
-            println!("bidi run {}", &text[bidi_run.clone()]);
             let bidi_level = bidi_levels[bidi_run.start];
 
             // Split each bidi run into "words" for caching purposes. If the same word occurs
             // frequently, we can cache its layout rather than re-shaping it every time.
             for word in word_break::simple(&text[bidi_run]) {
-                println!("  word {}", word);
                 self.push_word(word, style, fonts, options, bidi_level);
             }
         }
@@ -86,7 +84,6 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
             // TODO: Reverse order if RTL. Minikin does not do this yet because it is "unlikely"
             // with the current font stack to have multiple script runs within an RTL font run.
             for (script, script_run) in script_runs(font_run) {
-                println!("    script_run {}", script_run);
                 // TODO: Re-use the harfbuzz buffer.
                 let mut buf = harfbuzz::Buffer::with(script_run);
                 buf.set_script(script.to_hb_script());

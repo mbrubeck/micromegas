@@ -20,7 +20,7 @@ use harfbuzz_sys::{
 };
 use pathfinder_font_renderer::freetype::{Face, ToFtF26Dot6};
 use self::freetype::succeeded;
-use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfnt_Table, FT_Set_Char_Size, FT_Set_Pixel_Sizes};
+use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfnt_Table, FT_Set_Char_Size};
 use std::ptr;
 use std::os::raw::{c_char, c_void};
 

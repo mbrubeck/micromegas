@@ -24,7 +24,7 @@ use self::freetype::freetype::{FT_Get_Char_Index, FT_ULong, FT_Face, FT_Load_Sfn
 use std::ptr;
 use std::os::raw::{c_char, c_void};
 
-impl Typeface for Face {
+impl<'a> Typeface for &'a Face {
     fn h_advance(&self, _glyph: u32, _: Options) -> f32 {
         unimplemented!()
     }

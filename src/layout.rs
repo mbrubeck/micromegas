@@ -8,7 +8,7 @@ use word_break;
 pub struct LayoutGlyph<'a, T: 'a> {
     pub x: f32,
     pub y: f32,
-    pub glyph_id: u32,
+    pub id: u32,
 
     // TODO: Move font info to Layout, to avoid storing it for every glyph.
     pub font: FakedFont<'a, T>,
@@ -91,7 +91,7 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
                     self.glyphs.push(LayoutGlyph {
                         x: glyph.x_offset() as f32 + self.advance,
                         y: glyph.y_offset() as f32,
-                        glyph_id: glyph.id(),
+                        id: glyph.id(),
                         font,
                     });
                     let advance = glyph.x_advance() as f32;

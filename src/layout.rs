@@ -94,6 +94,16 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
             }
         }
     }
+
+    pub fn append(&mut self, other: Self) {
+        self.glyphs.reserve(other.glyphs.len());
+        for mut glyph in other.glyphs {
+            glyph.x += self.advance;
+            self.glyphs.push(glyph);
+        }
+        self.advances.extend(other.advances);
+        self.advance += other.advance;
+    }
 }
 
 #[derive(Debug, Clone)]

@@ -94,7 +94,7 @@ pub struct FontFamily<T> {
 
 impl<T> FontFamily<T> where T: Typeface {
     pub fn new(fonts: Vec<Font<T>>) -> Self {
-        assert!(fonts.len() > 1, "FontFamily must contain at least one font");
+        assert!(!fonts.is_empty(), "FontFamily must contain at least one font");
         FontFamily { fonts }
     }
 

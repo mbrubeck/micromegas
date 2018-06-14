@@ -4,6 +4,15 @@ use script::script_runs;
 use unicode_bidi as bidi;
 use word_break;
 
+#[derive(Debug, Clone)]
+pub struct LayoutGlyph<'a, T: 'a> {
+    pub x: f32,
+    pub y: f32,
+    pub glyph_id: u32,
+
+    // TODO: Move font info to Layout, to avoid storing it for every glyph.
+    pub font: FakedFont<'a, T>,
+}
 
 #[derive(Debug, Clone)]
 pub struct Layout<'a, T: 'a> {
@@ -104,14 +113,4 @@ impl<'a, T> Layout<'a, T> where T: Typeface {
         self.advances.extend(other.advances);
         self.advance += other.advance;
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct LayoutGlyph<'a, T: 'a> {
-    pub x: f32,
-    pub y: f32,
-    pub glyph_id: u32,
-
-    // TODO: Move font info to Layout, to avoid storing it for every glyph.
-    pub font: FakedFont<'a, T>,
 }
